@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.binggr.mapper.LinkMapper">
+  <resultMap id="BaseResultMap" type="com.binggr.model.Link">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="linkName" jdbcType="VARCHAR" property="linkname" />
+    <result column="linkUrl" jdbcType="VARCHAR" property="linkurl" />
+    <result column="linkImage" jdbcType="VARCHAR" property="linkimage" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, linkName, linkUrl, linkImage
+  </sql>
+  <select id="list" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_link
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_link
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.binggr.model.Link">
+    insert into t_link (id, linkName, linkUrl, 
+      linkImage)
+    values (#{id,jdbcType=INTEGER}, #{linkname,jdbcType=VARCHAR}, #{linkurl,jdbcType=VARCHAR}, 
+      #{linkimage,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.binggr.model.Link">
+    update t_link
+    <set>
+      <if test="linkname != null">
+        linkName = #{linkname,jdbcType=VARCHAR},
+      </if>
+      <if test="linkurl != null">
+        linkUrl = #{linkurl,jdbcType=VARCHAR},
+      </if>
+      <if test="linkimage != null">
+        linkImage = #{linkimage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.binggr.mapper.BlogMapper">
+  <resultMap id="BaseResultMap" type="com.binggr.model.Blog">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="summary" jdbcType="VARCHAR" property="summary" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="releaseDate" jdbcType="TIMESTAMP" property="releasedate" />
+    <result column="clickHit" jdbcType="INTEGER" property="clickhit" />
+    <result column="replyHit" jdbcType="INTEGER" property="replyhit" />
+    <result column="agreeHit" jdbcType="INTEGER" property="agreehit" />
+    <result column="keyWord" jdbcType="VARCHAR" property="keyword" />
+    <association property="blogType"  column="typeId" select="com.binggr.mapper.BlogTypeMapper.selectByPrimaryKey"/>
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.binggr.model.Blog">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, summary, image, releaseDate, clickHit, replyHit, agreeHit, typeId, keyWord
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+
+  <select id="sumList" resultType="java.util.Map">
+    select count(*) as countlist, sum(clickHit) as clickTotal, sum(replyHit) as replyTotal, sum(agreeHit) as agreeTotal from t_blog
+  </select>
+
+  <select id="countList" resultMap="ResultMapWithBLOBs">
+    select date_format(releaseDate,'%Y年%m月') as releaseDataStr,count(*) as blogCount
+    from t_blog group by date_format(releaseDate, '%Y年%m月')
+    order by date_format(releaseDate,'%Y年%m月') desc
+  </select>
+
+  <select id="list" parameterType="Map" resultMap="ResultMapWithBLOBs">
+    select * from t_blog
+    <where>
+        <if test="title!=null and title!=''">
+            and title like #{title}
+        </if>
+        <if test="typeid!=null and typeid!=''">
+            and typeId=#{typeid}
+        </if>
+        <if test="releaseDataStr!=null and releaseDataStr!=''">
+          and date_format(releasedate,'%Y年%m月') = #{releaseDataStr}
+        </if>
+    </where>
+    order by releaseDate desc
+    <if test="start!=null and size!=null">
+        limit #{start},#{size}
+    </if>
+  </select>
+
+  <select id="hotList" parameterType="Map" resultMap="ResultMapWithBLOBs">
+    select * from t_blog
+    order by clickHit desc
+    <if test="start!=null and size!=null">
+      limit #{start},#{size}
+    </if>
+  </select>
+
+  <select id="getTotal" parameterType="Map" resultType="Long">
+    select count(*) from t_blog
+    <where>
+      <if test="title!=null and title!=''">
+        and title like #{title}
+      </if>
+      <if test="typeid!=null and typeid!=''">
+        and typeId = #{typeid}
+      </if>
+      <if test="releaseDataStr!=null and releaseDataStr!=''">
+        and date_format(releaseDate,'%Y年%m月') like #{releaseDataStr}
+      </if>
+    </where>   
+  </select>
+  <insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="Blog">
+    insert into t_blog value(null,#{title},#{summary},#{image},now(),0,0,0,#{content},#{blogType.id},#{keyword})
+  </insert>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_blog
+
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_blog
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="updateByPrimaryKey" parameterType="com.binggr.model.Blog">
+    update t_blog
+    <set >
+      <if test="title!=null and title!=''">
+        title = #{title},
+      </if>
+      <if test="summary!=null and summary!=''">
+        summary = #{summary},
+      </if>
+      <if test="image!=null and image!=''">
+        image = #{image},
+      </if>
+      <if test="blogType.id!=null and blogType.id!=''">
+        typeId = #{blogType.id},
+      </if>
+      <if test="keyword!=null and keyword!=''">
+        keyWord = #{keyword},
+      </if>
+      <if test="content!=null and content!=''">
+        content = #{content},
+      </if>
+      <if test="clickhit!=null and clickhit!=''">
+        clickHit = #{clickhit},
+      </if>
+      <if test="replyhit!=null and replyhit!=''">
+        replyHit = #{replyhit},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+</mapper>

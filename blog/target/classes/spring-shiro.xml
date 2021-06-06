@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--自定义-->
+    <bean id="myRealm" class="com.binggr.realm.MyRealm"></bean>
+
+    <!--安全管理器 登录权限验证-->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="myRealm"/>
+    </bean>
+
+    <!--shiro的过滤器-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!--shiro的核心安全接口-->
+        <property name="securityManager" ref="securityManager"></property>
+        <!--身份认证失败，跳转到登录界面-->
+        <property name="loginUrl" value="/login.jsp"/>
+        <property name="filterChainDefinitions">
+            <!-- /admin/**路径需要登录才能使用 -->
+            <value>
+                /login=anon
+                /admin/**=authc
+            </value>
+        </property>
+    </bean>
+
+    <!--保证shiro内部lifecycle函数的bean执行-->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!--开启shiro的注解-->
+    <bean  class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>
+
+    <!--加上安全管理-->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+</beans>

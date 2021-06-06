@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.binggr.mapper.BlogTypeMapper">
+  <resultMap id="BaseResultMap" type="com.binggr.model.BlogType">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="typeName" jdbcType="VARCHAR" property="typename" />
+    <result column="orderNo" jdbcType="INTEGER" property="orderno" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, typeName, orderNo
+  </sql>
+
+  <select id="countList" resultMap="BaseResultMap">
+    select t2.id,t2.typeName,count(t1.id) as blogCount from t_blog t1
+    right join t_blogtype t2 on t1.typeId=t2.id group by t2.typeName
+    order by t2.orderNo
+  </select>
+
+  <select id="list" parameterType="Map" resultMap="BaseResultMap">
+    select * from t_blogtype
+    <if test="typeName!=null and typeName!=''">
+      where typeName=#{typename}
+    </if>
+    <if test="start!=null and size!=null">
+      limit #{start},${size}
+    </if>
+  </select>
+
+  <select id="getTotal" parameterType="Map" resultType="Long">
+    select count(*) from t_blogtype
+  </select>
+
+  <insert id="add" parameterType="BlogType">
+    insert into t_blogtype(typeName, orderNo)
+    value (#{typename},#{orderno})
+  </insert>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_blogtype
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_blogtype
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="updateByPrimaryKey" parameterType="com.binggr.model.BlogType">
+    update t_blogtype
+    set typeName = #{typename,jdbcType=VARCHAR},
+      orderNo = #{orderno,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

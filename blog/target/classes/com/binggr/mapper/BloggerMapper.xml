@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.binggr.mapper.BloggerMapper">
+  <resultMap id="BaseResultMap" type="com.binggr.model.Blogger">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="userName" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="nickName" jdbcType="VARCHAR" property="nickname" />
+    <result column="sign" jdbcType="VARCHAR" property="sign" />
+    <result column="imageName" jdbcType="VARCHAR" property="imagename" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.binggr.model.Blogger">
+    <result column="profile" jdbcType="LONGVARCHAR" property="profile" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, userName, password, nickName, sign, imageName
+  </sql>
+  <sql id="Blob_Column_List">
+    profile
+  </sql>
+  <select id="selectByUserName" parameterType="String" resultMap="ResultMapWithBLOBs">
+        select * from t_blogger where userName=#{userName}
+  </select>
+  <update id="updateByUserId" parameterType="Blogger">
+    update t_blogger
+    <set>
+      <if test="username!=null and username!=''">
+        userName=#{username},
+      </if>
+      <if test="password!=null and password!=''">
+        passWord=#{password},
+      </if>
+      <if test="nickname!=null and nickname!=''">
+        nickName=#{nickname},
+      </if>
+      <if test="sign!=null and sign!=''">
+        sign=#{sign},
+      </if>
+      <if test="imagename!=null and imagename!=''">
+        imageName=#{imagename},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+</mapper>

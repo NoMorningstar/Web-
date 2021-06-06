@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="Student-Score-Management-System:Web2 exploded2">
+    <output-path>$PROJECT_DIR$/out/artifacts/Student_Score_Management_System_Web2_exploded2</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="Student-Score-Management-System/web/Web2" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="javaee-facet-classes" facet="Student-Score-Management-System/web/Web2" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

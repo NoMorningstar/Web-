@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="IntelligentHospitalSystem-master:Web exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/IntelligentHospitalSystem_master_Web_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="IntelligentHospitalSystem-master/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="IntelligentHospitalSystem-master" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
